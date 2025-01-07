@@ -2,28 +2,31 @@
 
 ## Group Members:
 
-names here.
+Irvin Li
        
 # Intentions:
 
-A statement of the problem you are solving and/or a high level description of the project.
+The goal of this project is to design and implement a system in C where multiple client processes can send files to a server. The server will sort these files into a central document, which remains accessible only by the server. Semaphores will be used to prevent any congestion that may happen during file transmission and uploading.
     
 # Intended usage:
 
-A description as to how the project will be used (describe the user interface).
+The system is designed for centralized file management. Clients interact with the system via a command-line interface. Their workflow includes:
+ - Running a client program to specify and send a file to the server.
+ - Receiving feedback on the success or failure of the file transfer.
+The server will handle incoming files, sorting their contents, and add it to the main file. Clients cannot directly access this central document. Server will return the document when it is finished.
+
   
 # Technical Details:
 
-A description of your technical design. This should include:
-   
-How you will be using the topics covered in class in the project.
-     
-How you are breaking down the project and who is responsible for which parts.
-  
-What data structures you will be using and how.
-     
-What algorithms and /or data structures you will be using, and how.
+Allocating memory - Helps allocate enough memory to handle files and other parts of the project
+Semaphores - Used to control the amount of clients that can be attended to and prevents conflict.
+File Handling - Used to process files and write into the main file found in the server.
+Pipes- Using named and unnamed pipes to communicate between server and client.
+
     
 # Intended pacing:
 
-A timeline with expected completion dates of parts of the project.
+January 10: Finish the pipe portion of the project and ensure that clients can communicate with the server. (Bare minimum)
+January 13: Get semaphores and permissions complete
+January 17: Have the file and sorting aspect of the project complete (Project should be basically finished)
+January 21: Have project complete along with video

@@ -1,3 +1,5 @@
+#include "pipe_networking.h"
+
 #ifndef client_h
 struct student {
     char name[25];
@@ -5,4 +7,7 @@ struct student {
     int tuition;
     char birthday[25];
 };
+
+
+
 #endif

@@ -28,26 +28,38 @@ int server_setup() {
 char * server_side_authentication(char *to_client) {
     int SYN = server_setup();
     char private_pipe1[pipe_size];
-    read(SYN, private_pipe1, sizeof(private_pipe1));
+    if(read(SYN, private_pipe1, sizeof(private_pipe1)) == -1) {
+        perror("Failed to read from private_pipe");
+    }
+
     int SYN_ACK = open(private_pipe1, O_WRONLY);
+    if(SYN_ACK == -1) {
+        perror("Failed to open private_pipe for writing");
+    }
+
     char message[256];
     strcpy(message, "Testing");
-    write(SYN_ACK, message, strlen(message) + 1);
+    if(write(SYN_ACK, message, strlen(message) + 1) == -1) {
+        perror("Failed to write into private_pipe");
+    }
     printf("SYN_ACK being sent to client");
-    char from_server[256];
-    read(SYN, from_server, sizeof(from_server));
-    if(strcmp(message, from_server)) {
+
+    char to_server[256];
+    if(read(SYN, to_server, sizeof(to_server)) == -1) {
+        perror("Failed to read the upstream message from client");
+    }
+    if(strcmp(message, to_server)) {
         printf("Success\n");
     } else {
-        printf("Server failed to send");
+        printf("Server failed to receive ACK");
     }
-    printf("SYN_ACK recieved through WKP");
-    *to_client = from_server;
-    return to_client;
+    printf("ACK recieved through WKP");
+    *to_client = SYN_ACK;
+    return SYN;
 }
 
 char * client_side_authentication(char *to_server) {
-    
+
 }
 void send_file_to_server(char *file_path);
 void receive_feedback_from_server();

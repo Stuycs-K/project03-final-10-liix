@@ -5,7 +5,7 @@
 //Returns file descriptor for the upstream pipe WKP
 
 int server_setup() {
-    char * WKP;
+    char WKP[pipe_size];
     int SYN = 0;
     if (mkfifo(WKP, 0666) == -1) {
         perror("Could not create WKP");
@@ -24,8 +24,8 @@ int server_setup() {
 }
 
 //Performs the serverside part of the 3-way handshake when esablishing connection with client.
-//Returns SYN_ACK (Will prompt users for an input)
-char * server_side_authentication(char *to_client) {
+//Returns upstream pipe)
+int server_side_authentication(char *to_client) {
     int SYN = server_setup();
     char private_pipe1[pipe_size];
     if(read(SYN, private_pipe1, sizeof(private_pipe1)) == -1) {
@@ -58,10 +58,27 @@ char * server_side_authentication(char *to_client) {
     return SYN;
 }
 
-char * client_side_authentication(char *to_server) {
+////Performs the serverside part of the 3-way handshake when esablishing connection with client.
+//Returns SYN_ACK 
+int client_side_authentication(char *to_server) {
+    char WKP[pipe_size];
+    char private_pipe[pipe_size];
+    mkfifo(private_pipe, 0666);
 
+    //Sends private_pipe descriptor to server 
+    int SYN = open(WKP, O_WRONLY);
+    write(SYN, private_pipe, strlen(private_pipe) + 1);
+
+    //Gets the SYN_ACK from the server through the private_pipe
+    int SYN_ACK = open(private_pipe, O_RDONLY);
+    remove(private_pipe);
+    char message[256];
+    read(SYN_ACK, message, sizeof(message));
+    printf(message);
+
+    //Sends ACK back
+    char ACK[sizeof(message)];
+    write(SYN, message, strlen(message) + 1);
+    *to_server = SYN;
+    return SYN_ACK;
 }
-void send_file_to_server(char *file_path);
-void receive_feedback_from_server();
-void handle_file_transfer(int pipe_fd, char *file_path);
-void process_client_request(int wkp_fd);

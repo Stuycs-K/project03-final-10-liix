@@ -9,10 +9,9 @@
 
 #ifndef pipe_networking_h
 
-void setup();
-void send_file_to_server(char *file_path);
-void receive_feedback_from_server();
-void handle_file_transfer(int pipe_fd, char *file_path);
-void process_client_request(int wkp_fd);
+int server_setup();
+int server_side_authentication(char *to_client);
+int client_side_authentication(char *to_server);
 
+ #define pipe_size 256
 #endif

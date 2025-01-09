@@ -27,12 +27,12 @@ int server_setup() {
 //Returns upstream pipe)
 int server_side_authentication(char *to_client) {
     int SYN = server_setup();
-    char private_pipe1[pipe_size];
-    if(read(SYN, private_pipe1, sizeof(private_pipe1)) == -1) {
+    char private_pipe[pipe_size];
+    if(read(SYN, private_pipe, sizeof(private_pipe)) == -1) {
         perror("Failed to read from private_pipe");
     }
 
-    int SYN_ACK = open(private_pipe1, O_WRONLY);
+    int SYN_ACK = open(private_pipe, O_WRONLY);
     if(SYN_ACK == -1) {
         perror("Failed to open private_pipe for writing");
     }

@@ -6,7 +6,7 @@
 int running = 1;
 // Signal handler for SIGINT
 void handle_sigint(int sig) {
-  printf("\nServer: Received SIGINT, cleaning up...\n");
+  printf("\nServer: Received SIGINT of SIGPIPE, cleaning up...\n");
   unlink(WKP); // Delete the WKP
   running = 0; // Stop the server loop
 }
@@ -21,7 +21,7 @@ int main() {
     int from_client = server_setup();
 
     int to_client;
-    from_client = server_handshake(&to_client);
+    from_client = server_side_authentication(&to_client);
 
     printf("Server: Client connected. Entering communication loop...\n");
 

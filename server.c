@@ -25,12 +25,14 @@ int main() {
 
     printf("Server: Client connected. Entering communication loop...\n");
 
+    char * init_message = "You are connected, please type in the path to your file";
+    write(to_client, init_message, sizeof(init_message));
     char buffer[256];
     while (read(from_client, buffer, sizeof(buffer)) > 0) {
       printf("Server: Received from client: %s\n", buffer);
-      char sample = "Please send message";
-      write(to_client, sample, sizeof(sample)); 
     }
+    char * message = "Thank you for sending your file";
+    write(to_client, message, sizeof(message)); 
 
     printf("Server: Client disconnected.\n");
     close(from_client); // Close upstream pipe

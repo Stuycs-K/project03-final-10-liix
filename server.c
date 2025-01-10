@@ -31,6 +31,7 @@ int main() {
     while (read(from_client, buffer, sizeof(buffer)) > 0) {
       printf("Server: Received from client: %s\n", buffer);
     }
+    clear(buffer);
     char * message = "Thank you for sending your file";
     write(to_client, message, sizeof(message)); 
 

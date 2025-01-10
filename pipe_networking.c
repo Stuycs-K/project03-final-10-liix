@@ -1,5 +1,17 @@
 #include "pipe_networking.h"
 
+int rand(){ // generates random int
+  int buff[1];
+  int random = open("/dev/urandom", O_RDONLY, 0);
+  read(random,buff,4);
+  close(random);
+  if(buff[0] < 0){
+    buff[0] *= -1;
+  }
+  return *buff;
+}
+
+
 //Setup:
 //Creates a WKP and waits for a connnection and removes WKP when connection is made
 //Returns file descriptor for the upstream pipe WKP
@@ -81,4 +93,9 @@ int client_side_authentication(char *to_server) {
     write(SYN, message, strlen(message) + 1);
     *to_server = SYN;
     return SYN_ACK;
+}
+
+int server_connect(int from_client) {
+    int to_client = 0;
+    return to_client;
 }

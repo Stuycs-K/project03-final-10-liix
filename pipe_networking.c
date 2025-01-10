@@ -17,7 +17,6 @@ int rand(){ // generates random int
 //Returns file descriptor for the upstream pipe WKP
 
 int server_setup() {
-    char WKP[pipe_size];
     int SYN = 0;
     if (mkfifo(WKP, 0666) == -1) {
         perror("Could not create WKP");
@@ -73,7 +72,6 @@ int server_side_authentication(char *to_client) {
 ////Performs the serverside part of the 3-way handshake when esablishing connection with client.
 //Returns SYN_ACK 
 int client_side_authentication(char *to_server) {
-    char WKP[pipe_size];
     char private_pipe[pipe_size];
     mkfifo(private_pipe, 0666);
 

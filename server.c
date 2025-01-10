@@ -14,6 +14,7 @@ void handle_sigint(int sig) {
 int main() {
   // Set up signal handling for shutdown
   signal(SIGINT, handle_sigint);
+  signal(SIGPIPE, handle_sigint);
 
   while (running) {
     printf("Server: Waiting for a client...\n");

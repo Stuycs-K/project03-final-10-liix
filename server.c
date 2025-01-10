@@ -36,5 +36,4 @@ int main() {
     close(to_client);   // Close downstream pipe
   }
   printf("Server: Shutting down...\n");
-  remove(WKP);
 }

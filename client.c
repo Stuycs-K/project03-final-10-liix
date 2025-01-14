@@ -1,6 +1,12 @@
 #include "pipe_networking.h"
 char private_pipe[256];
 int running = 1;
+struct Student {
+    char name[100];
+    char date_of_birth[20];
+    char year[10];
+    char major[100];
+};
 
 int main() {
     int from_server;
@@ -17,16 +23,16 @@ int main() {
         printf("Client: Enter a file (or type 'exit' to quit): ");
         fgets(file, sizeof(file), stdin);
         file[strcspn(file, "\n")] = 0; // Remove newline character
-
         if (strcmp(file, "exit") == 0) {
-        printf("Client: Disconnecting...\n");
-        break;
+            printf("Client: Disconnecting...\n");
+            break;
         }
-
-        if (write(to_server, file, strlen(file) + 1) == -1) {
-        perror("Client: Error sending message");
-        break;
+        char message[] = "sending file now";
+        if (write(to_server, message, strlen(message) + 1) == -1) {
+            perror("Client: Error sending message");
+            break;
         }
+        
 
         char response[256];
         if (read(from_server, response, sizeof(response)) > 0) {

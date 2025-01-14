@@ -36,7 +36,7 @@ int server_setup() {
 
 //Performs the serverside part of the 3-way handshake when esablishing connection with client.
 //Returns upstream pipe)
-int server_side_authentication(char *to_client) {
+int server_side_authentication(int *to_client) {
     int SYN = server_setup();
     char private_pipe[pipe_size];
     if(read(SYN, private_pipe, sizeof(private_pipe)) == -1) {
@@ -71,7 +71,7 @@ int server_side_authentication(char *to_client) {
 
 ////Performs the serverside part of the 3-way handshake when esablishing connection with client.
 //Returns SYN_ACK 
-int client_side_authentication(char *to_server) {
+int client_side_authentication(int *to_server) {
     char private_pipe[pipe_size];
     mkfifo(private_pipe, 0666);
 

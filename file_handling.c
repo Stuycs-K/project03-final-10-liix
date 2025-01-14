@@ -37,3 +37,26 @@ void parse_csv_line(char *line, struct Student *student) {
     }
 }
 
+int count_lines(const char *filename) {
+    FILE *file = fopen(filename, "r");
+    if (!file) {
+        perror("Error opening file");
+        exit(EXIT_FAILURE);
+    }
+
+    int line_count = 0;
+    char line[256];
+
+    fgets(line, 256, file); // Skip the header row
+    if (fgets(line, 256, file)) {
+        while (fgets(line, 256, file)) {
+            line_count++;
+        }
+    }
+
+    fclose(file);
+    return line_count;
+}
+
+
+

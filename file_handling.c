@@ -43,7 +43,6 @@ int count_lines(const char *filename) {
         perror("Error opening file");
         exit(EXIT_FAILURE);
     }
-
     int line_count = 0;
     char line[256];
 
@@ -56,6 +55,30 @@ int count_lines(const char *filename) {
 
     fclose(file);
     return line_count;
+}
+
+struct Student *read_csv(const char *filename) {
+    int count = count_lines(filename);
+    FILE *file = fopen(filename, "r");
+    if (!file) {
+        perror("Error opening file");
+        err();
+    }
+
+    char line[256];
+    fgets(line, 256, file); // Skip the header row
+
+    struct Student *students = malloc(sizeof(struct Student) * count);
+    int counter = 0;
+
+    while (fgets(line, 256, file)) {
+        line[strcspn(line, "\n")] = 0; // Remove newline character
+        parse_csv_line(line, &students[counter]);
+        counter++;
+    }
+
+    fclose(file);
+    return students;
 }
 
 

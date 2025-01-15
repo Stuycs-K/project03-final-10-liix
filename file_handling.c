@@ -9,7 +9,9 @@ void parse_csv_line(char *line, struct Student *student) {
     if (token != NULL) {
         strcpy(student->name, token);
     } else {
+        printf("Empty");
         strcpy(student->name, "");
+        return;
     }
 
     // Parse date of birth

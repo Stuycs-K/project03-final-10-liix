@@ -10,10 +10,19 @@
 #ifndef pipe_networking_h
 #define NETWORKING_H
 #define WKP "non"
+char private_pipe[256];
+int running = 1;
+struct Student {
+    char name[100];
+    char date_of_birth[20];
+    char year[10];
+    char major[100];
+};
+
 int rand();
 int server_setup();
-int server_side_authentication(char *to_client);
-int client_side_authentication(char *to_server);
+int server_side_authentication(int *to_client);
+int client_side_authentication(int *to_server);
 int server_connect(int from_client);
 
  #define pipe_size 256

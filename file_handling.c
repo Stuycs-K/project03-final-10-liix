@@ -39,7 +39,7 @@ void parse_csv_line(char *line, struct Student *student) {
     }
 }
 
-int count_lines(const char *filename) {
+int count_lines(char *filename) {
     FILE *file = fopen(filename, "r");
     if (!file) {
         perror("Error opening file");
@@ -59,7 +59,7 @@ int count_lines(const char *filename) {
     return line_count;
 }
 
-struct Student *read_csv(const char *filename) {
+struct Student *read_csv(char *filename) {
     int count = count_lines(filename);
     FILE *file = fopen(filename, "r");
     if (!file) {

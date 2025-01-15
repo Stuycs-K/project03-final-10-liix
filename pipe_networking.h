@@ -8,7 +8,7 @@
 #include <errno.h>
 
 #ifndef pipe_networking_h
-#define NETWORKING_H
+#define pip_networking_h
 #define WKP "non"
 char private_pipe[256];
 int running = 1;

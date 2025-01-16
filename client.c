@@ -33,6 +33,16 @@ int main() {
             break;
         }
         
+        read_csv(file);
+        printf(students[1]);
+        printf(count);
+        for(int i = 0; i < count; i++) {
+            if(write(to_server, students[i], sizeof(struct Student))) {
+                perror("Client Error sending while parsing file");
+                break;
+            }
+
+        }
 
         char response[256];
         if (read(from_server, response, sizeof(response)) > 0) {

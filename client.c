@@ -1,12 +1,6 @@
-#include "pipe_networking.h"
+#include "file_handling.h"
 char private_pipe[256];
 int running = 1;
-struct Student {
-    char name[100];
-    char date_of_birth[20];
-    char year[10];
-    char major[100];
-};
 
 int main() {
     int from_server;
@@ -15,7 +9,7 @@ int main() {
     char buffer[256];
     read(to_server, buffer, sizeof(buffer));
     snprintf(private_pipe, sizeof(private_pipe), "client_pipe_%d", getpid());
-    printf(buffer);
+    printf("%s", buffer);
 
     printf("Please type the file that you want to transfer to the server");
     char file[256];
@@ -33,9 +27,10 @@ int main() {
             break;
         }
         
-        read_csv(file);
-        printf(students[1]);
-        printf(count);
+        struct Student * students;
+        int count = count_lines();
+        students = read_csv(file, students);
+        printf("%s", students[1]);
         for(int i = 0; i < count; i++) {
             if(write(to_server, students[i], sizeof(struct Student))) {
                 perror("Client Error sending while parsing file");

@@ -1,5 +1,11 @@
 #include "pipe_networking.h"
 
+int err(){
+    printf("errno %d\n",errno);
+    printf("%s\n",strerror(errno));
+    exit(1);
+}
+
 // Function to parse a CSV line into a Student struct
 void parse_csv_line(char *line, struct Student *student) {
     char *token;
@@ -59,7 +65,7 @@ int count_lines(char *filename) {
     return line_count;
 }
 
-struct Student *read_csv(char *filename) {
+struct Student *read_csv(char *filename, struct Student * students) {
     int count = count_lines(filename);
     FILE *file = fopen(filename, "r");
     if (!file) {
@@ -69,8 +75,7 @@ struct Student *read_csv(char *filename) {
 
     char line[256];
     fgets(line, 256, file); // Skip the header row
-
-    struct Student *students = malloc(sizeof(struct Student) * count);
+    students = malloc(sizeof(struct Student) * count);
     int counter = 0;
 
     while (fgets(line, 256, file)) {

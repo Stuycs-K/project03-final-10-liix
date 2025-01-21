@@ -1,10 +1,10 @@
 
 all: client server
 client: client.o pipe_networking.o file_handling.o
-	gcc -o client basic_client.o pipe_networking.o file_handling.o
+	gcc -o client client.o pipe_networking.o file_handling.o
 
 server: server.o pipe_networking.o
-	gcc -o server basic_server.o pipe_networking.o
+	gcc -o server server.o pipe_networking.o
 
 client.o: client.c pipe_networking.h file_handling.h
 	gcc -c client.c
@@ -19,5 +19,4 @@ file_handling.o: file_handling.c file_handling.h pipe_networking.h
 	gcc -c file_handling.c
 
 clean:
-	rm *.o
-	rm *~
+	rm -f *.o *~ client server

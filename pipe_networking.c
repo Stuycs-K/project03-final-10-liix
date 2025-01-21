@@ -18,6 +18,7 @@ int rand(){ // generates random int
 
 int server_setup() {
     int SYN = 0;
+    remove(WKP);
     if (mkfifo(WKP, 0666) == -1) {
         perror("Could not create WKP");
     }
@@ -27,20 +28,19 @@ int server_setup() {
         perror("Could not open WKP for reading");
         remove(WKP);
         exit(1);
+    } else {
+        printf("Can open\n");
     }
-
-    printf("Client connected. Removing WKP...\n");
-    remove(WKP);
+    printf("Server: Client connected and sent private pipe name.\n");
     return SYN;
 }
 
-//Performs the serverside part of the 3-way handshake when esablishing connection with client.
+//Performs the serverside part of the 3-way handshake when establishing connection with client.
 //Returns upstream pipe)
 int server_side_authentication(int *to_client) {
     int SYN = server_setup();
-    char private_pipe[pipe_size];
     if(read(SYN, private_pipe, sizeof(private_pipe)) == -1) {
-        perror("Failed to read from private_pipe");
+        perror("Failed to read from WKP");
     }
 
     int SYN_ACK = open(private_pipe, O_WRONLY);
@@ -69,14 +69,17 @@ int server_side_authentication(int *to_client) {
     return SYN;
 }
 
-////Performs the serverside part of the 3-way handshake when esablishing connection with client.
+////Performs the clientside part of the 3-way handshake when establishing connection with server.
 //Returns SYN_ACK 
 void client_side_authentication(int *to_server) {
-    char private_pipe[pipe_size];
     mkfifo(private_pipe, 0666);
-
+    printf("trying to run");
     //Sends private_pipe descriptor to server 
     int SYN = open(WKP, O_WRONLY);
+    if(SYN == -1) {
+        perror("what is this msitake");
+        exit(1);
+    }
     write(SYN, private_pipe, strlen(private_pipe) + 1);
     close(SYN);
 
@@ -89,7 +92,6 @@ void client_side_authentication(int *to_server) {
 
     //Sends ACK back
     if (strcmp(message, "Testing") == 0) {
-        int SYN = open(WKP, O_WRONLY);
         char ACK[sizeof(message)] = "Testing";
         write(SYN, ACK, strlen(ACK) + 1);
         close(SYN);

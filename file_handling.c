@@ -55,18 +55,15 @@ int count_lines(char *filename) {
     char line[256];
 
     fgets(line, 256, file); // Skip the header row
-    if (fgets(line, 256, file)) {
-        while (fgets(line, 256, file)) {
-            line_count++;
-        }
+    while (fgets(line, 256, file)) {
+        line_count++;
     }
 
     fclose(file);
     return line_count;
 }
 
-struct Student *read_csv(char *filename, struct Student * students) {
-    int count = count_lines(filename);
+struct Student *read_csv(char *filename, struct Student * students, int count) {
     FILE *file = fopen(filename, "r");
     if (!file) {
         perror("Error opening file");
@@ -74,14 +71,12 @@ struct Student *read_csv(char *filename, struct Student * students) {
     }
 
     char line[256];
+    int i = 0;
     fgets(line, 256, file); // Skip the header row
-    students = malloc(sizeof(struct Student) * count);
-    int counter = 0;
-
     while (fgets(line, 256, file)) {
         line[strcspn(line, "\n")] = 0; // Remove newline character
-        parse_csv_line(line, &students[counter]);
-        counter++;
+        parse_csv_line(line, &students[i]);
+        i++;
     }
 
     fclose(file);

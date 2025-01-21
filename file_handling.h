@@ -5,6 +5,6 @@
 int err();
 void parse_csv_line(char *line, struct Student *student);
 int count_lines(char *filename);
-struct Student *read_csv(char *filename, struct Student * students);
+struct Student *read_csv(char *filename, struct Student * students, int count);
 
 #endif

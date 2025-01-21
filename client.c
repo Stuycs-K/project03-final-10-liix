@@ -1,14 +1,22 @@
 #include "file_handling.h"
-char private_pipe[256];
-int running = 1;
+volatile sig_atomic_t running = 1;
+
+static void handle_signal(int sig) {
+  printf("\nServer: Received SIGINT of SIGPIPE, cleaning up...\n");
+  unlink(WKP); // Delete the WKP
+  unlink(private_pipe);
+  running = 0; // Stop the server loop
+}
 
 int main() {
-    int from_server;
+    signal(SIGINT, handle_signal);
+    signal(SIGPIPE, handle_signal);
     int to_server;
-    from_server = client_side_authentication(&to_server);
+    printf("Does client");
+    client_side_authentication(&to_server);
+    int from_server = open(private_pipe, O_RDONLY);
     char buffer[256];
     read(to_server, buffer, sizeof(buffer));
-    snprintf(private_pipe, sizeof(private_pipe), "client_pipe_%d", getpid());
     printf("%s", buffer);
 
     printf("Please type the file that you want to transfer to the server");
@@ -28,15 +36,15 @@ int main() {
         }
         
         struct Student * students;
-        int count = count_lines();
-        students = read_csv(file, students);
-        printf("%s", students[1]);
+        int count = count_lines(file);
+        students = malloc(count * sizeof(struct Student));
+        students = read_csv(file, students, count);
+        printf("%s", &students[1]);
         for(int i = 0; i < count; i++) {
-            if(write(to_server, students[i], sizeof(struct Student))) {
+            if(write(to_server, &students[i], sizeof(struct Student))) {
                 perror("Client Error sending while parsing file");
                 break;
             }
-
         }
 
         char response[256];
@@ -46,9 +54,9 @@ int main() {
             perror("Client: Error reading response");
             break;
         }
+        free(students);
     }
     close(to_server);
-    close(from_server);
     unlink(private_pipe); // Ensure private pipe is removed
     printf("Client: Cleaned up and exiting.\n");
     return 0;

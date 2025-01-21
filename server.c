@@ -20,10 +20,8 @@ int main() {
   char * Name, DOB, Age, Major;
   while (running) {
     printf("Server: Waiting for a client...\n");
-    int from_client = server_setup();
-
     int to_client;
-    from_client = server_side_authentication(&to_client);
+    int from_client = server_side_authentication(&to_client);
 
     printf("Server: Client connected. Entering communication loop...\n");
 
@@ -43,6 +41,6 @@ int main() {
     close(to_client);   // Close downstream pipe
   }
   fclose(csv);
-  unlink(WKP);
+  remove(WKP);
   printf("Server: Shutting down...\n");
 }

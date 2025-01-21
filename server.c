@@ -1,21 +1,23 @@
 #include "pipe_networking.h"
-#include "pipe_networking.h"
 #include <signal.h>
 #include <stdlib.h>
 
-int running = 1;
+volatile sig_atomic_t running = 1;
 // Signal handler for SIGINT
-void handle_sigint(int sig) {
+static void handle_signal(int sig) {
   printf("\nServer: Received SIGINT of SIGPIPE, cleaning up...\n");
   unlink(WKP); // Delete the WKP
+  unlink(private_pipe);
   running = 0; // Stop the server loop
 }
 
 int main() {
   // Set up signal handling for shutdown
-  signal(SIGINT, handle_sigint);
-  signal(SIGPIPE, handle_sigint);
+  signal(SIGINT, handle_signal);
+  signal(SIGPIPE, handle_signal);
 
+  FILE * csv = fopen("Storage.csv", "a+");
+  char * Name, DOB, Age, Major;
   while (running) {
     printf("Server: Waiting for a client...\n");
     int from_client = server_setup();
@@ -31,13 +33,16 @@ int main() {
     while (read(from_client, buffer, sizeof(buffer)) > 0) {
       printf("Server: Received from client: %s\n", buffer);
     }
-    clear(buffer);
+    fflush(csv);
+    memset(buffer, 0, sizeof(buffer));
     char * message = "Thank you for sending your file";
-    write(to_client, message, sizeof(message)); 
+    write(to_client, message, sizeof(message) + 1); 
 
     printf("Server: Client disconnected.\n");
     close(from_client); // Close upstream pipe
     close(to_client);   // Close downstream pipe
   }
+  fclose(csv);
+  unlink(WKP);
   printf("Server: Shutting down...\n");
 }

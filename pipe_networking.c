@@ -23,14 +23,14 @@ int server_setup() {
     }
     printf("WKP created. Waiting for client connection...\n");
 
-    if(SYN = open(WKP, O_RDONLY) == -1) {
+    if((SYN = open(WKP, O_RDONLY)) == -1) {
         perror("Could not open WKP for reading");
         remove(WKP);
         exit(1);
     }
 
     printf("Client connected. Removing WKP...\n");
-    remove("non");
+    remove(WKP);
     return SYN;
 }
 
@@ -59,7 +59,7 @@ int server_side_authentication(int *to_client) {
     if(read(SYN, to_server, sizeof(to_server)) == -1) {
         perror("Failed to read the upstream message from client");
     }
-    if(strcmp(message, to_server)) {
+    if(strcmp(message, to_server) == 0) {
         printf("Success\n");
     } else {
         printf("Server failed to receive ACK");
@@ -71,26 +71,31 @@ int server_side_authentication(int *to_client) {
 
 ////Performs the serverside part of the 3-way handshake when esablishing connection with client.
 //Returns SYN_ACK 
-int client_side_authentication(int *to_server) {
+void client_side_authentication(int *to_server) {
     char private_pipe[pipe_size];
     mkfifo(private_pipe, 0666);
 
     //Sends private_pipe descriptor to server 
     int SYN = open(WKP, O_WRONLY);
     write(SYN, private_pipe, strlen(private_pipe) + 1);
+    close(SYN);
 
     //Gets the SYN_ACK from the server through the private_pipe
     int SYN_ACK = open(private_pipe, O_RDONLY);
-    remove(private_pipe);
     char message[256];
+    memset(message, 0, sizeof(message));
     read(SYN_ACK, message, sizeof(message));
-    printf(message);
+    printf("%s", message);
 
     //Sends ACK back
-    char ACK[sizeof(message)];
-    write(SYN, message, strlen(message) + 1);
-    *to_server = SYN;
-    return SYN_ACK;
+    if (strcmp(message, "Testing") == 0) {
+        int SYN = open(WKP, O_WRONLY);
+        char ACK[sizeof(message)] = "Testing";
+        write(SYN, ACK, strlen(ACK) + 1);
+        close(SYN);
+    }
+    close(SYN_ACK);
+    unlink(private_pipe);
 }
 
 int server_connect(int from_client) {

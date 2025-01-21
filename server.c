@@ -13,8 +13,8 @@ static void handle_signal(int sig) {
 
 int main() {
   // Set up signal handling for shutdown
-  signal(SIGINT, handle_signal);
   signal(SIGPIPE, handle_signal);
+  signal(SIGINT, handle_signal);
 
   FILE * csv = fopen("Storage.csv", "a+");
   char * Name, DOB, Age, Major;

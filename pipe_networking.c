@@ -28,8 +28,6 @@ int server_setup() {
         perror("Could not open WKP for reading");
         remove(WKP);
         exit(1);
-    } else {
-        printf("Can open\n");
     }
     printf("Server: Client connected and sent private pipe name.\n");
     return SYN;
@@ -39,11 +37,12 @@ int server_setup() {
 //Returns upstream pipe)
 int server_side_authentication(int *to_client) {
     int SYN = server_setup();
-    if(read(SYN, private_pipe, sizeof(private_pipe)) == -1) {
+    char client_pipe[pipe_size];
+    if(read(SYN, client_pipe, sizeof(client_pipe)) == -1) {
         perror("Failed to read from WKP");
     }
 
-    int SYN_ACK = open(private_pipe, O_WRONLY);
+    int SYN_ACK = open(client_pipe, O_WRONLY);
     if(SYN_ACK == -1) {
         perror("Failed to open private_pipe for writing");
     }
@@ -81,6 +80,7 @@ void client_side_authentication(int *to_server) {
         exit(1);
     }
     write(SYN, private_pipe, strlen(private_pipe) + 1);
+    *to_server = SYN;
     close(SYN);
 
     //Gets the SYN_ACK from the server through the private_pipe
